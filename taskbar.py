@@ -1,7 +1,7 @@
 import pygame as p
-from base import time, date
-from font import SysFont
-from button import ImageButton
+from resources.base import time, date
+from resources.font import SysFont
+from resources.button import ImageButton
 
 class Taskbar:
     def __init__(self, height = 50, colour = (228, 239, 250), font_size = 13):
@@ -16,7 +16,7 @@ class Taskbar:
         self.applications = {}
 
     def add_app(self, name):
-        self.applications[ImageButton(image = name.icon)] = name
+        self.applications[ImageButton(image = "icons/" + name.icon)] = name
 
     def get_rect(self, parent):
         self.surface = p.transform.scale(self.surface, (parent.rect.width, self.height))

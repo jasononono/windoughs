@@ -18,4 +18,4 @@ class Font:
 class SysFont(Font):
     def __init__(self, size, bold = False, italic = False):
         modifier = ("z" if italic else "b") if bold else ("i" if italic else "")
-        super().__init__(f"defaultFont/segoeui{modifier}.ttf", size, bold, italic)
+        super().__init__(f"systemFont/segoeui{modifier}.ttf", size, bold, italic)

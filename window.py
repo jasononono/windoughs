@@ -1,7 +1,8 @@
 import pygame as p
-from font import SysFont
-from button import IconButton
-import icon
+from resources.font import SysFont
+from resources.button import IconButton
+from resources import icon
+
 
 class Window:
     def __init__(self, application, position = (0, 0),
@@ -18,7 +19,7 @@ class Window:
         self.title_bar_colour = title_bar_colour
         self.font = SysFont(13)
         self.iconSize = icon_size
-        self.icon = None if application.icon is None else icon.Image(application.icon, [icon_size] * 2)
+        self.icon = None if application.icon is None else icon.Image("icons/" + application.icon, [icon_size] * 2)
 
         self.exitButton = IconButton(size = (40, self.title_bar.height),
                                      highlight_colour = (203, 48, 36), highlight_foreground = (255, 255, 255))

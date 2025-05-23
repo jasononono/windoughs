@@ -1,5 +1,6 @@
 import pygame as p
-import icon
+from resources import icon
+
 
 class ButtonTemplate:
     def __init__(self, position = (0, 0), size = (19, 19),

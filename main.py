@@ -2,8 +2,8 @@ import pygame as p
 from taskbar import Taskbar
 from window import Window
 
-from start import Start
-from commandPrompt import CommandPrompt
+from applications.start import Start
+from applications.commandPrompt import CommandPrompt
 
 class Event:
     def __init__(self):
@@ -33,7 +33,7 @@ class Event:
 
 
 class Screen:
-    def __init__(self, background = "background.png"):
+    def __init__(self, background = "default.png"):
         p.init()
         p.display.set_caption("Windoughs 12 Version 0.2")
 
@@ -53,7 +53,7 @@ class Screen:
         self.dragged = None
         self.windows = []
 
-        self.background_image = p.image.load(background)
+        self.background_image = p.image.load("backgrounds/" + background)
         self.background = None
         self.background_rect = None
         self.bound = None
