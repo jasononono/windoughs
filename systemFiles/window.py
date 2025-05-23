@@ -1,7 +1,8 @@
 import pygame as p
-from resources.font import SysFont
-from resources.button import IconButton
-from resources import icon
+
+from systemFiles.assets.font import SysFont
+from systemFiles.assets.button import IconButton
+from systemFiles.assets.icon import ImageIcon
 
 
 class Window:
@@ -19,7 +20,7 @@ class Window:
         self.title_bar_colour = title_bar_colour
         self.font = SysFont(13)
         self.iconSize = icon_size
-        self.icon = None if application.icon is None else icon.Image("icons/" + application.icon, [icon_size] * 2)
+        self.icon = None if application.icon is None else ImageIcon(application.icon, [icon_size] * 2)
 
         self.exitButton = IconButton(size = (40, self.title_bar.height),
                                      highlight_colour = (203, 48, 36), highlight_foreground = (255, 255, 255))
@@ -74,6 +75,12 @@ class Window:
     def valid_drag_position(self, position):
         if (self.abs[0] < position[0] < self.abs[0] + self.title_bar.width - 40 and
             self.abs[1] - self.title_bar.height < position[1] < self.abs[1]):
+            return True
+        return False
+
+    def valid_window_position(self, position):
+        if (self.abs[0] < position[0] < self.abs[0] + self.title_bar.width and
+            self.abs[1] - self.title_bar.height < position[1] < self.abs[1] + self.rect.height):
             return True
         return False
 

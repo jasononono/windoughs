@@ -1,5 +1,6 @@
 import pygame as p
 
+
 class Font:
     def __init__(self, name, size, bold = False, italic = False):
         self.name = name
@@ -18,4 +19,4 @@ class Font:
 class SysFont(Font):
     def __init__(self, size, bold = False, italic = False):
         modifier = ("z" if italic else "b") if bold else ("i" if italic else "")
-        super().__init__(f"systemFont/segoeui{modifier}.ttf", size, bold, italic)
+        super().__init__(f"systemFiles/systemFont/segoeui{modifier}.ttf", size, bold, italic)

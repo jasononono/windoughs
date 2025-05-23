@@ -1,0 +1,1 @@
+smoothIcons = ("default.png", "")

@@ -1,5 +1,7 @@
 import pygame as p
 
+from systemFiles.icons import iconOptions
+
 
 class Instruction:
     def __init__(self):
@@ -24,15 +26,20 @@ class Icon:
                     [position[i] + (end[i] - 0.5) * self.size[i] for i in range(2)], 2)
 
 
-class Image:
-    def __init__(self, image, size = (28, 28)):
-        self.image = p.image.load(image)
+class ImageIcon:
+    def __init__(self, image = None, size = (28, 28)):
+        if image is None:
+            image = "default.png"
+        self.image = p.image.load("systemFiles/icons/" + image)
         image_size = self.image.get_size()
         if image_size[0] / size[0] < image_size[1] / size[1]:
             image_size = image_size[0] / image_size[1] * size[1], size[1]
         else:
             image_size = size[0], image_size[1] / image_size[0] * size[0]
-        self.image = p.transform.scale(self.image,image_size)
+        if image in iconOptions.smoothIcons:
+            self.image = p.transform.smoothscale(self.image, image_size)
+        else:
+            self.image = p.transform.scale(self.image, image_size)
         self.rect = self.image.get_rect()
 
     def display(self, surface, position):

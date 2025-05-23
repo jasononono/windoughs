@@ -1,10 +1,10 @@
 import pygame as p
-from resources import icon
+from systemFiles.assets import icon
 
 
 class ButtonTemplate:
     def __init__(self, position = (0, 0), size = (19, 19),
-                 colour = (228, 239, 250), highlight_colour = (242, 247, 254)):
+                 colour = (228, 239, 250), highlight_colour = (250, 250, 255),):
         self.surface = p.Surface(size)
         self.rect = self.surface.get_rect()
         self.rect.x, self.rect.y = position
@@ -18,21 +18,21 @@ class ButtonTemplate:
     def get_rect(self, parent):
         self.abs = parent.abs[0] + self.rect.x, parent.abs[1] + self.rect.y
 
-    def mechanic(self, parent, event):
+    def mechanic(self, parent, event, enabled):
         self.get_rect(parent)
-        if self.valid_mouse_position(event.mouse_pos):
+        if self.valid_mouse_position(event.mouse_pos) or enabled:
             self.surface.fill(self.highlightColour)
             if event.mouse[0]:
                 self.pressed = True
         else:
             self.surface.fill(self.colour)
             self.pressed = False
-        if self.pressed and event.detect(p.MOUSEBUTTONUP):
-                return True
+        if not enabled and self.pressed and event.detect(p.MOUSEBUTTONUP):
+            return True
         return False
 
-    def update(self, parent, event):
-        action = self.mechanic(parent, event)
+    def update(self, parent, event, enabled = False):
+        action = self.mechanic(parent, event, enabled)
         parent.surface.blit(self.surface, self.rect)
         return action
 
@@ -42,32 +42,35 @@ class ButtonTemplate:
             return True
         return False
 
+
 class ImageButton(ButtonTemplate):
     def __init__(self, position = (0, 0), image = "home_icon.png", size = (40, 40),
-                 colour = (228, 239, 250), highlight_colour = (242, 247, 254), image_size = (28, 28)):
-        self.image = icon.Image(image, image_size)
+                 colour = (228, 239, 250), highlight_colour = (250, 250, 255), image_size = (28, 28)):
+        self.image = icon.ImageIcon(image, image_size)
         super().__init__(position, size, colour, highlight_colour)
 
-    def update(self, parent, event):
-        action = super().mechanic(parent, event)
+    def update(self, parent, event, enabled = False):
+        action = super().mechanic(parent, event, enabled)
         self.image.display(self.surface, (self.rect.width / 2, self.rect.height / 2))
         parent.surface.blit(self.surface, self.rect)
         return action
 
+
 class IconButton(ButtonTemplate):
     def __init__(self, position = (0, 0), instruction = icon.x, size = (40, 40),
-                 colour = (255, 255, 255), highlight_colour = (242, 247, 254),
+                 colour = (255, 255, 255), highlight_colour = (250, 250, 255),
                  foreground = (48, 53, 61), highlight_foreground = None):
         super().__init__(position, size, colour, highlight_colour)
         self.icon = icon.Icon(instruction, [min(size)] * 2)
         self.foreground = foreground
         self.highlightForeground = foreground if highlight_foreground is None else highlight_foreground
 
-    def update(self, parent, event):
-        action = super().update(parent, event)
+    def update(self, parent, event, enabled = False):
+        action = super().update(parent, event, enabled)
         self.icon.display(parent, [self.abs[i] + self.rect.size[i] / 2 for i in range(2)],
                           self.highlightForeground if self.valid_mouse_position(event.mouse_pos) else self.foreground)
         return action
+
 
 '''
 class TextButton(ButtonTemplate):

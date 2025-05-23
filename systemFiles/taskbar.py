@@ -1,7 +1,9 @@
 import pygame as p
-from resources.base import time, date
-from resources.font import SysFont
-from resources.button import ImageButton
+
+from systemFiles.assets.base import time, date
+from systemFiles.assets.font import SysFont
+from systemFiles.assets.button import ImageButton
+
 
 class Taskbar:
     def __init__(self, height = 50, colour = (228, 239, 250), font_size = 13):
@@ -16,7 +18,7 @@ class Taskbar:
         self.applications = {}
 
     def add_app(self, name):
-        self.applications[ImageButton(image = "icons/" + name.icon)] = name
+        self.applications[ImageButton(image = name.icon)] = name
 
     def get_rect(self, parent):
         self.surface = p.transform.scale(self.surface, (parent.rect.width, self.height))
@@ -38,8 +40,18 @@ class Taskbar:
         amount = len(self.applications.items())
         for i, j in enumerate(self.applications.keys()):
             j.rect.center = self.rect.width / 2 - (amount - 1) * 30 + i * 50, self.rect.height / 2
-            if j.update(self, event):
+            enabled = self.applications[j] in parent.applications
+            if j.update(self, event, True if enabled else False):
                 action = self.applications[j]
+            if enabled:
+                if self.applications[j] is parent.applications[-1] and parent.active:
+                    p.draw.line(self.surface, (95, 141, 214),
+                                (j.rect.centerx - 7, j.rect.bottom - 5),
+                                (j.rect.centerx + 7, j.rect.bottom - 5), 3)
+                else:
+                    p.draw.line(self.surface, (112, 121, 146),
+                                (j.rect.centerx - 3, j.rect.bottom - 5),
+                                (j.rect.centerx + 3, j.rect.bottom - 5), 3)
 
         parent.surface.blit(self.surface, self.rect)
         return action
