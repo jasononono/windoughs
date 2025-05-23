@@ -10,19 +10,18 @@ class Instruction:
 
 
 class Icon:
-    def __init__(self, instruction, size = (19, 19), colour = (69, 69, 79)):
+    def __init__(self, instruction, size = (19, 19)):
         self.size = size
         self.instruction = instruction
-        self.colour = colour
 
-    def display(self, parent, position = (0, 0)):
+    def display(self, parent, position = (0, 0), colour = (0, 0, 0)):
         for i, j in self.instruction.template:
-            i(self, parent.surface, position, *j)
+            i(self, parent.surface, position, colour, *j)
 
-    def draw_line(self, surface, position, start, end):
-        p.draw.line(surface, self.colour,
-                    [position[0] + start[i] * self.size[i] for i in range(2)],
-                    [position[1] + end[i] * self.size[i] for i in range(2)], 2)
+    def draw_line(self, surface, position, colour, start, end):
+        p.draw.line(surface, colour,
+                    [position[i] + (start[i] - 0.5) * self.size[i] for i in range(2)],
+                    [position[i] + (end[i] - 0.5) * self.size[i] for i in range(2)], 2)
 
 
 class Image:
@@ -42,5 +41,5 @@ class Image:
 
 
 x = Instruction()
-x.draw_line((0.3, 0.3), (0.7, 0.7))
-x.draw_line((0.3, 0.7), (0.7, 0.3))
+x.draw_line((0.35, 0.35), (0.65, 0.65))
+x.draw_line((0.35, 0.65), (0.65, 0.35))

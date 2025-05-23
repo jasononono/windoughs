@@ -1,6 +1,6 @@
 import pygame as p
 from base import time, date
-from font import Font
+from font import SysFont
 from button import ImageButton
 
 class Taskbar:
@@ -10,15 +10,13 @@ class Taskbar:
 
         self.surface = p.Surface((1, 1))
         self.rect = self.surface.get_rect()
-        self.abs = None
+        self.abs = 0, 0
 
-        self.font = Font(font_size)
+        self.font = SysFont(font_size)
         self.applications = {}
-        self.add_app("home", "home_icon.png")
-        self.add_app("command_prompt", "command_icon.png")
 
-    def add_app(self, name, icon):
-        self.applications[ImageButton((0, 0), icon)] = name
+    def add_app(self, name):
+        self.applications[ImageButton(image = name.icon)] = name
 
     def get_rect(self, parent):
         self.surface = p.transform.scale(self.surface, (parent.rect.width, self.height))
@@ -36,10 +34,12 @@ class Taskbar:
         self.font.render(self.surface, date(),
                          (self.rect.right - date_size[0] - 20, self.height - date_size[1] - 7))
 
+        action = None
         amount = len(self.applications.items())
         for i, j in enumerate(self.applications.keys()):
             j.rect.center = self.rect.width / 2 - (amount - 1) * 30 + i * 50, self.rect.height / 2
             if j.update(self, event):
-                print(self.applications[j])
+                action = self.applications[j]
 
         parent.surface.blit(self.surface, self.rect)
+        return action

@@ -9,6 +9,8 @@ class ButtonTemplate:
         self.rect.x, self.rect.y = position
         self.abs = None
 
+        self.pressed = False
+
         self.colour = colour
         self.highlightColour = highlight_colour
 
@@ -19,10 +21,13 @@ class ButtonTemplate:
         self.get_rect(parent)
         if self.valid_mouse_position(event.mouse_pos):
             self.surface.fill(self.highlightColour)
-            if event.detect(p.MOUSEBUTTONDOWN):
-                return True
+            if event.mouse[0]:
+                self.pressed = True
         else:
             self.surface.fill(self.colour)
+            self.pressed = False
+        if self.pressed and event.detect(p.MOUSEBUTTONUP):
+                return True
         return False
 
     def update(self, parent, event):
@@ -48,19 +53,22 @@ class ImageButton(ButtonTemplate):
         parent.surface.blit(self.surface, self.rect)
         return action
 
-'''
 class IconButton(ButtonTemplate):
-    def __init__(self, parent, command, position = (0, 0), size = (19, 19), instruction = icon.x,
-                 colour = (45, 45, 55), highlight_colour = (55, 55, 65)):
-        super().__init__(parent, command, position, size, colour, highlight_colour)
-        self.icon = icon.Icon(instruction)
+    def __init__(self, position = (0, 0), instruction = icon.x, size = (40, 40),
+                 colour = (255, 255, 255), highlight_colour = (242, 247, 254),
+                 foreground = (48, 53, 61), highlight_foreground = None):
+        super().__init__(position, size, colour, highlight_colour)
+        self.icon = icon.Icon(instruction, [min(size)] * 2)
+        self.foreground = foreground
+        self.highlightForeground = foreground if highlight_foreground is None else highlight_foreground
 
-    def update(self, screen):
-        action = super().update(screen)
-        self.icon.display(screen, (self.absX, self.absY))
+    def update(self, parent, event):
+        action = super().update(parent, event)
+        self.icon.display(parent, [self.abs[i] + self.rect.size[i] / 2 for i in range(2)],
+                          self.highlightForeground if self.valid_mouse_position(event.mouse_pos) else self.foreground)
         return action
 
-
+'''
 class TextButton(ButtonTemplate):
     def __init__(self, parent, command, position = (0, 0), text = "Ok", fontSize = 13,
                  colour = (55, 55, 65), highlight_colour = (45, 45, 55)):
