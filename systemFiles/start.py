@@ -2,8 +2,7 @@ import pygame as p
 
 
 class Start:
-    size = (400, 300)
-    icon = "home_icon.png"
+    icon = "start_icon.png"
 
-    def __init__(self):
+    def __init__(self, parent):
         pass

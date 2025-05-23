@@ -40,11 +40,11 @@ class Taskbar:
         amount = len(self.applications.items())
         for i, j in enumerate(self.applications.keys()):
             j.rect.center = self.rect.width / 2 - (amount - 1) * 30 + i * 50, self.rect.height / 2
-            enabled = self.applications[j] in parent.applications
+            enabled = parent.is_application(self.applications[j])
             if j.update(self, event, True if enabled else False):
                 action = self.applications[j]
             if enabled:
-                if self.applications[j] is parent.applications[-1] and parent.active:
+                if self.applications[j] is parent.topmost_launcher() and parent.active:
                     p.draw.line(self.surface, (95, 141, 214),
                                 (j.rect.centerx - 7, j.rect.bottom - 5),
                                 (j.rect.centerx + 7, j.rect.bottom - 5), 3)

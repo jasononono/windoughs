@@ -58,6 +58,7 @@ class Screen:
         self.active = False
         self.windows = []
         self.applications = []
+        self.requestedUpdates = []
 
         self.background_image = p.image.load("systemFiles/backgrounds/" + background)
         self.background = None
@@ -79,14 +80,51 @@ class Screen:
         self.background_rect = self.background.get_rect()
         self.background_rect.center = self.rect.center
 
-    def activate(self, item):
-        self.windows.append(self.windows.pop(item))
-        self.applications.append(self.applications.pop(item))
+    def activate(self, window):
+        del self.windows[self.windows.index(window)]
+        self.windows.append(window)
 
-    def new_window(self, application):
-        app = application()
-        self.applications.append(application)
-        self.windows.append(Window(app, (self.rect.centerx - app.size[0] / 2, self.rect.centery - app.size[1] / 2)))
+    def destroy(self, window):
+        del self.windows[self.windows.index(window)]
+
+    def activate_application(self, launcher):
+        for i in self.windows:
+            if isinstance(i.application, launcher):
+                self.activate(i)
+
+    def open_application(self, launcher):
+        self.applications.append(launcher(self))
+
+    def quit_application(self, application):
+        self.applications.remove(application)
+        for i, w in enumerate(self.windows):
+            if w.application is application:
+                del(self.windows[i])
+
+    def new_window(self, application, size = (400, 300), title = "Window", icon = None):
+        self.windows.append(Window(application, (self.rect.centerx - size[0] / 2, self.rect.centery - size[1] / 2),
+                                   size, title, icon = icon))
+
+    def is_application(self, launcher):
+        for i in self.applications:
+            if isinstance(i, launcher):
+                return True
+        return False
+
+    def topmost_launcher(self):
+        if len(self.windows) == 0:
+            return None
+        return type(self.windows[-1].application)
+
+    def topmost_window(self, window = None):
+        if window is None:
+            return self.windows[-1]
+        return True if self.windows[-1] is window else False
+
+    def get_windows(self, application = None):
+        if application is None:
+            return self.windows
+        return [i for i in self.windows if i.application is application]
 
     def update(self):
         self.event.update()
@@ -96,31 +134,38 @@ class Screen:
         self.get_rect()
         self.surface.blit(self.background, self.background_rect)
 
+        # TASKBAR
         action = self.taskbar.update(self, self.event)
         if action is Start:
             print("start")
         elif action is not None:
             self.active = True
-            if action in self.applications:
-                self.activate(self.applications.index(action))
+            if self.is_application(action):
+                self.activate_application(action)
             else:
-                self.new_window(action)
+                self.open_application(action)
 
+        # DRAGGING
         if self.dragged is not None:
             self.dragged.follow_cursor(self.event.mouse_pos)
-        activation_queue = []
 
-        for i in range(len(self.windows)):
-            if self.windows[i].update(self, self.event) and self.windows[-1] is self.windows[i]:
-                del(self.windows[i])
-                del(self.applications[i])
+        # APPLICATIONS
+        self.requestedUpdates = []
+        for i in self.applications:
+            i.update(self, self.event)
+
+        # WINDOWS
+        activation_queue = []
+        for i, w in enumerate(self.windows):
+            if w in self.requestedUpdates and w.update(self, self.event):
+                self.destroy(w)
                 break
-            if self.windows[i].get_dragged(self, self.event):
-                self.dragged = self.windows[i]
-            elif self.dragged is self.windows[i]:
+            if w.get_dragged(self, self.event):
+                self.dragged = w
+            elif self.dragged is w:
                 self.dragged = None
-            if self.event.mouse_down() and self.windows[i].valid_window_position(self.event.mouse_pos):
-                activation_queue.append(i)
+            if self.event.mouse_down() and w.valid_window_position(self.event.mouse_pos):
+                activation_queue.append(w)
 
         if self.event.mouse_down():
             if len(activation_queue) == 0:

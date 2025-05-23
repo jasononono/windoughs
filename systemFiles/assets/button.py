@@ -20,14 +20,18 @@ class ButtonTemplate:
 
     def mechanic(self, parent, event, enabled):
         self.get_rect(parent)
-        if self.valid_mouse_position(event.mouse_pos) or enabled:
+        if self.valid_mouse_position(event.mouse_pos):
             self.surface.fill(self.highlightColour)
             if event.mouse[0]:
                 self.pressed = True
+        elif enabled:
+            self.surface.fill(self.highlightColour)
+            self.pressed = False
         else:
             self.surface.fill(self.colour)
             self.pressed = False
-        if not enabled and self.pressed and event.detect(p.MOUSEBUTTONUP):
+
+        if self.pressed and event.detect(p.MOUSEBUTTONUP):
             return True
         return False
 
@@ -44,7 +48,7 @@ class ButtonTemplate:
 
 
 class ImageButton(ButtonTemplate):
-    def __init__(self, position = (0, 0), image = "home_icon.png", size = (40, 40),
+    def __init__(self, position = (0, 0), image = None, size = (40, 40),
                  colour = (228, 239, 250), highlight_colour = (250, 250, 255), image_size = (28, 28)):
         self.image = icon.ImageIcon(image, image_size)
         super().__init__(position, size, colour, highlight_colour)

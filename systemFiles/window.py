@@ -6,21 +6,24 @@ from systemFiles.assets.icon import ImageIcon
 
 
 class Window:
-    def __init__(self, application, position = (0, 0),
-                 title_bar_colour = (255, 255, 255), title_bar_height = 30, icon_size = 20):
+    def __init__(self, application, position = (0, 0), size = (400, 300),
+                 title = "Window", title_bar_colour = (255, 255, 255), title_bar_height = 30,
+                 icon = None, icon_size = 20):
         self.application = application
 
-        self.surface = p.Surface(application.size)
+        self.size = size
+        self.surface = p.Surface(size)
         self.rect = self.surface.get_rect()
         self.rect.x, self.rect.y = position[0], position[1] + title_bar_height
         self.title_bar = self.rect.copy()
         self.title_bar.y -= title_bar_height
         self.title_bar.height = title_bar_height
 
+        self.title = title
         self.title_bar_colour = title_bar_colour
         self.font = SysFont(13)
         self.iconSize = icon_size
-        self.icon = None if application.icon is None else ImageIcon(application.icon, [icon_size] * 2)
+        self.icon = None if icon is None else ImageIcon(icon, [icon_size] * 2)
 
         self.exitButton = IconButton(size = (40, self.title_bar.height),
                                      highlight_colour = (203, 48, 36), highlight_foreground = (255, 255, 255))
@@ -29,8 +32,8 @@ class Window:
         self.abs = 0, 0
 
     def get_rect(self):
-        p.transform.scale(self.surface, self.application.size)
-        self.rect.width, self.rect.height = self.application.size
+        p.transform.scale(self.surface, self.size)
+        self.rect.width, self.rect.height = self.size
         self.title_bar.width = self.rect.width
         self.rect.x, self.rect.y = self.title_bar.x, self.title_bar.y + self.title_bar.height
 
@@ -53,8 +56,8 @@ class Window:
         if self.icon is not None:
             self.icon.display(parent.surface,
                               (self.title_bar.left + self.iconSize / 2 + 5, self.title_bar.centery))
-        size = self.font.get_size(self.application.title)
-        self.font.render(parent.surface, self.application.title,
+        size = self.font.get_size(self.title)
+        self.font.render(parent.surface, self.title,
                                 (self.title_bar.left + (10 if self.icon is None else self.iconSize + 10),
                                  self.title_bar.centery - size[1] / 2))
 
