@@ -1,4 +1,5 @@
 import pygame as p
+from systemFiles.assets import base
 
 from systemFiles.assets.base import time, date
 from systemFiles.assets.font import SysFont
@@ -6,7 +7,7 @@ from systemFiles.assets.button import ImageButton
 
 
 class Taskbar:
-    def __init__(self, height = 50, colour = (228, 239, 250), font_size = 13):
+    def __init__(self, height = 50, colour = base.TINTED_GREY2, font_size = 13):
         self.height = height
         self.colour = colour
 
@@ -53,11 +54,11 @@ class Taskbar:
                 action = self.applications[j]
             if enabled:
                 if self.applications[j] is parent.topmost_application() and parent.active:
-                    p.draw.line(self.surface, (0, 120, 212),
+                    p.draw.line(self.surface, base.BLUE1,
                                 (j.rect.centerx - 7, j.rect.bottom - 5),
                                 (j.rect.centerx + 7, j.rect.bottom - 5), 3)
                 else:
-                    p.draw.line(self.surface, (112, 121, 146),
+                    p.draw.line(self.surface, base.TINTED_GREY1,
                                 (j.rect.centerx - 3, j.rect.bottom - 5),
                                 (j.rect.centerx + 3, j.rect.bottom - 5), 3)
 

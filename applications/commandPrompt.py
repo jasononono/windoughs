@@ -8,4 +8,4 @@ class CommandPrompt(Application):
         self.window = parent.new_window(self, (400, 300), "Command Prompt", "command_icon.png")
 
     def update(self, parent, event):
-        super().update(parent, event)
+        return super().update(parent, event)

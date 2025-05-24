@@ -1,9 +1,10 @@
 import pygame as p
+import data
 
 from systemFiles.taskbar import Taskbar
 from systemFiles.window import Window
-from applications.start import Start
 
+from applications.start import Start
 from applications.commandPrompt import CommandPrompt
 from applications.application import Application
 
@@ -36,9 +37,9 @@ class Event:
 
 
 class Screen:
-    def __init__(self, background = "default.png"):
+    def __init__(self):
         p.init()
-        p.display.set_caption("Windoughs 12 Version 0.4")
+        p.display.set_caption("Windoughs 12 Version " + data.VERSION)
 
         size = p.display.get_desktop_sizes()[0]
         self.surface = p.display.set_mode(size, p.RESIZABLE)
@@ -60,7 +61,7 @@ class Screen:
         self.applications = []
         self.requestedUpdates = []
 
-        self.background_image = p.image.load("systemFiles/backgrounds/" + background)
+        self.background_image = p.image.load("systemFiles/backgrounds/" + data.WALLPAPER)
         self.background = None
         self.background_rect = None
         self.bound = None
@@ -105,9 +106,12 @@ class Screen:
             if w.application is application:
                 del(self.windows[i])
 
-    def new_window(self, application, size = (400, 300), title = "Window", icon = None):
-        self.windows.append(Window(application, (self.rect.centerx - size[0] / 2, self.rect.centery - size[1] / 2),
-                                   size, title, icon = icon))
+    def new_window(self, application, size = (400, 300), title = "Window", icon = None, position = None):
+        if position is None:
+            position = self.rect.centerx - size[0] / 2, self.rect.centery - size[1] / 2
+        window = Window(application, position, size, title, icon = icon)
+        self.windows.append(window)
+        return window
 
     def get_windows(self, application = None):
         if application is None:
@@ -149,21 +153,26 @@ class Screen:
 
         # APPLICATIONS
         self.requestedUpdates = []
-        for i in self.applications:
-            i.update(self, self.event)
+        i = 0
+        while i < len(self.applications):
+            if not self.applications[i].update(self, self.event):
+                i += 1
 
         # WINDOWS
         activation_queue = []
-        for i, w in enumerate(self.windows):
+        i = 0
+        while i < len(self.windows):
+            w = self.windows[i]
             if w in self.requestedUpdates and w.update(self, self.event):
                 self.destroy(w)
-                break
+                continue
             if w.get_dragged(self, self.event):
                 self.dragged = w
             elif self.dragged is w:
                 self.dragged = None
             if self.event.mouse_down() and w.valid_window_position(self.event.mouse_pos):
                 activation_queue.append(w)
+            i += 1
 
         if self.event.mouse_down() and not self.taskbar.valid_mouse_position(self.event.mouse_pos):
             if len(activation_queue) == 0:

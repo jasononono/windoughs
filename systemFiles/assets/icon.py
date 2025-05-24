@@ -1,4 +1,5 @@
 import pygame as p
+from systemFiles.assets import base
 
 from systemFiles.icons import iconOptions
 
@@ -16,7 +17,7 @@ class Icon:
         self.size = size
         self.instruction = instruction
 
-    def display(self, parent, position = (0, 0), colour = (0, 0, 0)):
+    def display(self, parent, position = (0, 0), colour = base.BLACK):
         for i, j in self.instruction.template:
             i(self, parent.surface, position, colour, *j)
 

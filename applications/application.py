@@ -11,3 +11,5 @@ class Application:
             parent.requestedUpdates.append(i)
         if len(parent.get_windows(self)) == 0: # Quit this application if no windows exist
             parent.quit_application(self)
+            return True
+        return False

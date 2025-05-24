@@ -1,4 +1,5 @@
 import pygame as p
+from systemFiles.assets import base
 
 from systemFiles.assets.font import SysFont
 from systemFiles.assets.button import IconButton
@@ -7,7 +8,7 @@ from systemFiles.assets.icon import ImageIcon
 
 class Window:
     def __init__(self, application, position = (0, 0), size = (400, 300),
-                 title = "Window", title_bar_colour = (255, 255, 255), title_bar_height = 30,
+                 title = "Window", title_bar_colour = base.WHITE, title_bar_height = 30,
                  icon = None, icon_size = 20):
         self.application = application
 
@@ -26,7 +27,7 @@ class Window:
         self.icon = None if icon is None else ImageIcon(icon, [icon_size] * 2)
 
         self.exitButton = IconButton(size = (40, self.title_bar.height),
-                                     highlight_colour = (203, 48, 36), highlight_foreground = (255, 255, 255))
+                                     highlight_colour = base.RED, highlight_foreground = base.WHITE)
 
         self.offset = 0, 0
         self.abs = 0, 0
@@ -45,14 +46,17 @@ class Window:
         self.abs = parent.abs[0] + self.rect.x, parent.abs[1] + self.rect.y
 
         # BORDER
-        p.draw.rect(parent.surface, (150, 150, 150) if parent.topmost_window(self) else (90, 90, 90),
-                    (self.rect.left - 1, self.title_bar.top - 1,
-                    self.rect.width + 2, self.rect.height + self.title_bar.height + 2))
+        if parent.topmost_window(self) and parent.active:
+            p.draw.rect(parent.surface, base.GREY2,
+                        (self.rect.left - 2, self.title_bar.top - 2,
+                        self.rect.width + 4, self.rect.height + self.title_bar.height + 4))
+        else:
+            p.draw.rect(parent.surface, base.GREY3,
+                        (self.rect.left - 1, self.title_bar.top - 1,
+                         self.rect.width + 2, self.rect.height + self.title_bar.height + 2))
 
         # TITLE BAR
         p.draw.rect(parent.surface, self.title_bar_colour, self.title_bar)
-        self.surface.fill((0, 0, 0))
-        parent.surface.blit(self.surface, self.rect)
 
         action = self.exitButton.update(parent, event, status = parent.topmost_window(self))
 
@@ -61,10 +65,13 @@ class Window:
                               (self.title_bar.left + self.iconSize / 2 + 5, self.title_bar.centery))
         size = self.font.get_size(self.title)
         self.font.render(parent.surface, self.title,
-                                (self.title_bar.left + (10 if self.icon is None else self.iconSize + 10),
+                                (self.title_bar.left + (15 if self.icon is None else self.iconSize + 15),
                                  self.title_bar.centery - size[1] / 2))
 
         self.offset = event.mouse_pos[0] - self.title_bar.x, event.mouse_pos[1] - self.title_bar.y
+
+        # SURFACE
+        parent.surface.blit(self.surface, self.rect)
 
         return action
 

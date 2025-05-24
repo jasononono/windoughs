@@ -1,4 +1,5 @@
 import pygame as p
+from systemFiles.assets import base
 
 from systemFiles.main import Screen
 

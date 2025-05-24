@@ -1,10 +1,12 @@
 import pygame as p
+from systemFiles.assets import base
+
 from systemFiles.assets import icon
 
 
 class ButtonTemplate:
     def __init__(self, position = (0, 0), size = (19, 19),
-                 colour = (228, 239, 250), highlight_colour = (250, 250, 255),):
+                 colour = base.TINTED_GREY2, highlight_colour = base.WHITE):
         self.surface = p.Surface(size)
         self.rect = self.surface.get_rect()
         self.rect.x, self.rect.y = position
@@ -55,7 +57,7 @@ class ButtonTemplate:
 
 class ImageButton(ButtonTemplate):
     def __init__(self, position = (0, 0), image = None, size = (40, 40),
-                 colour = (228, 239, 250), highlight_colour = (250, 250, 255), image_size = (25, 25)):
+                 colour = base.TINTED_GREY2, highlight_colour = base.WHITE, image_size = (25, 25)):
         self.image = icon.ImageIcon(image, image_size)
         super().__init__(position, size, colour, highlight_colour)
 
@@ -68,7 +70,7 @@ class ImageButton(ButtonTemplate):
 
 class IconButton(ButtonTemplate):
     def __init__(self, position = (0, 0), instruction = icon.x, size = (40, 40),
-                 colour = (255, 255, 255), highlight_colour = (250, 250, 255),
+                 colour = base.WHITE, highlight_colour = base.WHITE,
                  foreground = (48, 53, 61), highlight_foreground = None):
         super().__init__(position, size, colour, highlight_colour)
         self.icon = icon.Icon(instruction, [min(size)] * 2)
