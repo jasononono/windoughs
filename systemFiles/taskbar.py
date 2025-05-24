@@ -20,6 +20,12 @@ class Taskbar:
     def add_app(self, name):
         self.applications[ImageButton(image = name.icon)] = name
 
+    def valid_mouse_position(self, position):
+        if (self.abs[0] < position[0] < self.abs[0] + self.rect.width and
+            self.abs[1] < position[1] < self.abs[1] + self.rect.height):
+            return True
+        return False
+
     def get_rect(self, parent):
         self.surface = p.transform.scale(self.surface, (parent.rect.width, self.height))
         self.rect = self.surface.get_rect()
@@ -41,7 +47,7 @@ class Taskbar:
         for i, j in enumerate(self.applications.keys()):
             j.rect.center = self.rect.width / 2 - (amount - 1) * 30 + i * 50, self.rect.height / 2
             enabled = parent.is_application(self.applications[j])
-            if j.update(self, event, True if enabled else False):
+            if j.update(self, event, True if enabled else None):
                 action = self.applications[j]
             if enabled:
                 if self.applications[j] is parent.topmost_launcher() and parent.active:

@@ -2,10 +2,10 @@ import pygame as p
 
 from systemFiles.taskbar import Taskbar
 from systemFiles.window import Window
-from systemFiles.start import Start
+from applications.start import Start
 
 from applications.commandPrompt import CommandPrompt
-from applications.defaultApplication import DefaultApplication
+from applications.application import Application
 
 
 class Event:
@@ -38,7 +38,7 @@ class Event:
 class Screen:
     def __init__(self, background = "default.png"):
         p.init()
-        p.display.set_caption("Windoughs 12 Version 0.3")
+        p.display.set_caption("Windoughs 12 Version 0.4")
 
         size = p.display.get_desktop_sizes()[0]
         self.surface = p.display.set_mode(size, p.RESIZABLE)
@@ -52,7 +52,7 @@ class Screen:
         self.taskbar = Taskbar()
         self.taskbar.add_app(Start)
         self.taskbar.add_app(CommandPrompt)
-        self.taskbar.add_app(DefaultApplication)
+        self.taskbar.add_app(Application)
 
         self.dragged = None
         self.active = False
@@ -107,7 +107,7 @@ class Screen:
 
     def is_application(self, launcher):
         for i in self.applications:
-            if isinstance(i, launcher):
+            if type(i) is launcher:
                 return True
         return False
 
@@ -167,7 +167,7 @@ class Screen:
             if self.event.mouse_down() and w.valid_window_position(self.event.mouse_pos):
                 activation_queue.append(w)
 
-        if self.event.mouse_down():
+        if self.event.mouse_down() and not self.taskbar.valid_mouse_position(self.event.mouse_pos):
             if len(activation_queue) == 0:
                 self.active = False
             else:

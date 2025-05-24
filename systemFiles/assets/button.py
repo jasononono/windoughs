@@ -11,6 +11,7 @@ class ButtonTemplate:
         self.abs = None
 
         self.pressed = False
+        self.status = True
 
         self.colour = colour
         self.highlightColour = highlight_colour
@@ -18,25 +19,31 @@ class ButtonTemplate:
     def get_rect(self, parent):
         self.abs = parent.abs[0] + self.rect.x, parent.abs[1] + self.rect.y
 
-    def mechanic(self, parent, event, enabled):
+    def mechanic(self, parent, event, enabled, status):
         self.get_rect(parent)
-        if self.valid_mouse_position(event.mouse_pos):
-            self.surface.fill(self.highlightColour)
+        if status is not None:
+            self.status = status
+
+        if self.valid_mouse_position(event.mouse_pos) and self.status:
             if event.mouse[0]:
                 self.pressed = True
-        elif enabled:
-            self.surface.fill(self.highlightColour)
-            self.pressed = False
         else:
-            self.surface.fill(self.colour)
             self.pressed = False
+
+        if enabled is not None:
+            self.surface.fill(self.highlightColour if enabled else self.colour)
+        else:
+            if self.valid_mouse_position(event.mouse_pos) and self.status:
+                self.surface.fill(self.highlightColour)
+            else:
+                self.surface.fill(self.colour)
 
         if self.pressed and event.detect(p.MOUSEBUTTONUP):
             return True
         return False
 
-    def update(self, parent, event, enabled = False):
-        action = self.mechanic(parent, event, enabled)
+    def update(self, parent, event, enabled = None, status = None):
+        action = self.mechanic(parent, event, enabled, status)
         parent.surface.blit(self.surface, self.rect)
         return action
 
@@ -53,8 +60,8 @@ class ImageButton(ButtonTemplate):
         self.image = icon.ImageIcon(image, image_size)
         super().__init__(position, size, colour, highlight_colour)
 
-    def update(self, parent, event, enabled = False):
-        action = super().mechanic(parent, event, enabled)
+    def update(self, parent, event, enabled = None, status = None):
+        action = super().mechanic(parent, event, enabled, status)
         self.image.display(self.surface, (self.rect.width / 2, self.rect.height / 2))
         parent.surface.blit(self.surface, self.rect)
         return action
@@ -69,10 +76,11 @@ class IconButton(ButtonTemplate):
         self.foreground = foreground
         self.highlightForeground = foreground if highlight_foreground is None else highlight_foreground
 
-    def update(self, parent, event, enabled = False):
-        action = super().update(parent, event, enabled)
+    def update(self, parent, event, enabled = None, status = None):
+        action = super().update(parent, event, enabled, status)
         self.icon.display(parent, [self.abs[i] + self.rect.size[i] / 2 for i in range(2)],
-                          self.highlightForeground if self.valid_mouse_position(event.mouse_pos) else self.foreground)
+                          self.highlightForeground if (self.valid_mouse_position(event.mouse_pos) and
+                                                       self.status) or enabled else self.foreground)
         return action
 
 

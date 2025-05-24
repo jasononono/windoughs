@@ -40,9 +40,9 @@ class Window:
         self.exitButton.rect.topleft = self.title_bar.right - 40, self.title_bar.top
 
     def update(self, parent, event):
-        self.abs = parent.abs[0] + self.rect.x, parent.abs[1] + self.rect.y
         self.fit_to_surface(parent.bound)
         self.get_rect()
+        self.abs = parent.abs[0] + self.rect.x, parent.abs[1] + self.rect.y
 
         p.draw.rect(parent.surface, (90, 90, 90),
                     (self.rect.left - 1, self.title_bar.top - 1,
@@ -51,7 +51,7 @@ class Window:
         self.surface.fill((0, 0, 0))
         parent.surface.blit(self.surface, self.rect)
 
-        action = self.exitButton.update(parent, event)
+        action = self.exitButton.update(parent, event, status = parent.topmost_window(self))
 
         if self.icon is not None:
             self.icon.display(parent.surface,
