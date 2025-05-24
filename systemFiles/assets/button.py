@@ -32,11 +32,10 @@ class ButtonTemplate:
 
         if enabled is not None:
             self.surface.fill(self.highlightColour if enabled else self.colour)
+        elif self.valid_mouse_position(event.mouse_pos) and self.status:
+            self.surface.fill(self.highlightColour)
         else:
-            if self.valid_mouse_position(event.mouse_pos) and self.status:
-                self.surface.fill(self.highlightColour)
-            else:
-                self.surface.fill(self.colour)
+            self.surface.fill(self.colour)
 
         if self.pressed and event.detect(p.MOUSEBUTTONUP):
             return True
@@ -56,7 +55,7 @@ class ButtonTemplate:
 
 class ImageButton(ButtonTemplate):
     def __init__(self, position = (0, 0), image = None, size = (40, 40),
-                 colour = (228, 239, 250), highlight_colour = (250, 250, 255), image_size = (28, 28)):
+                 colour = (228, 239, 250), highlight_colour = (250, 250, 255), image_size = (25, 25)):
         self.image = icon.ImageIcon(image, image_size)
         super().__init__(position, size, colour, highlight_colour)
 

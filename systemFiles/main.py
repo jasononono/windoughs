@@ -80,20 +80,24 @@ class Screen:
         self.background_rect = self.background.get_rect()
         self.background_rect.center = self.rect.center
 
-    def activate(self, window):
-        del self.windows[self.windows.index(window)]
-        self.windows.append(window)
+    def open_application(self, launcher):
+        self.applications.append(launcher(self))
 
-    def destroy(self, window):
-        del self.windows[self.windows.index(window)]
+    def is_application(self, launcher):
+        for i in self.applications:
+            if type(i) is launcher:
+                return True
+        return False
 
     def activate_application(self, launcher):
         for i in self.windows:
             if isinstance(i.application, launcher):
                 self.activate(i)
 
-    def open_application(self, launcher):
-        self.applications.append(launcher(self))
+    def topmost_application(self):
+        if len(self.windows) == 0:
+            return None
+        return type(self.windows[-1].application)
 
     def quit_application(self, application):
         self.applications.remove(application)
@@ -105,26 +109,22 @@ class Screen:
         self.windows.append(Window(application, (self.rect.centerx - size[0] / 2, self.rect.centery - size[1] / 2),
                                    size, title, icon = icon))
 
-    def is_application(self, launcher):
-        for i in self.applications:
-            if type(i) is launcher:
-                return True
-        return False
+    def get_windows(self, application = None):
+        if application is None:
+            return self.windows
+        return [i for i in self.windows if i.application is application]
 
-    def topmost_launcher(self):
-        if len(self.windows) == 0:
-            return None
-        return type(self.windows[-1].application)
+    def activate(self, window):
+        del self.windows[self.windows.index(window)]
+        self.windows.append(window)
 
     def topmost_window(self, window = None):
         if window is None:
             return self.windows[-1]
         return True if self.windows[-1] is window else False
 
-    def get_windows(self, application = None):
-        if application is None:
-            return self.windows
-        return [i for i in self.windows if i.application is application]
+    def destroy(self, window):
+        del self.windows[self.windows.index(window)]
 
     def update(self):
         self.event.update()
@@ -136,9 +136,7 @@ class Screen:
 
         # TASKBAR
         action = self.taskbar.update(self, self.event)
-        if action is Start:
-            print("start")
-        elif action is not None:
+        if action is not None:
             self.active = True
             if self.is_application(action):
                 self.activate_application(action)

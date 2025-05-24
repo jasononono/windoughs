@@ -44,9 +44,12 @@ class Window:
         self.get_rect()
         self.abs = parent.abs[0] + self.rect.x, parent.abs[1] + self.rect.y
 
-        p.draw.rect(parent.surface, (90, 90, 90),
+        # BORDER
+        p.draw.rect(parent.surface, (150, 150, 150) if parent.topmost_window(self) else (90, 90, 90),
                     (self.rect.left - 1, self.title_bar.top - 1,
-                     self.rect.width + 2, self.rect.height + self.title_bar.height + 2))
+                    self.rect.width + 2, self.rect.height + self.title_bar.height + 2))
+
+        # TITLE BAR
         p.draw.rect(parent.surface, self.title_bar_colour, self.title_bar)
         self.surface.fill((0, 0, 0))
         parent.surface.blit(self.surface, self.rect)

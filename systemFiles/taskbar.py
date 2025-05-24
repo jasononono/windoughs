@@ -36,12 +36,14 @@ class Taskbar:
         self.get_rect(parent)
         self.surface.fill(self.colour)
 
+        # TIME
         self.font.render(self.surface, time(),
                          (self.rect.right - self.font.get_size(time())[0] - 20, 6))
         date_size = self.font.get_size(date())
         self.font.render(self.surface, date(),
                          (self.rect.right - date_size[0] - 20, self.height - date_size[1] - 7))
 
+        # LAUNCHERS
         action = None
         amount = len(self.applications.items())
         for i, j in enumerate(self.applications.keys()):
@@ -50,8 +52,8 @@ class Taskbar:
             if j.update(self, event, True if enabled else None):
                 action = self.applications[j]
             if enabled:
-                if self.applications[j] is parent.topmost_launcher() and parent.active:
-                    p.draw.line(self.surface, (95, 141, 214),
+                if self.applications[j] is parent.topmost_application() and parent.active:
+                    p.draw.line(self.surface, (0, 120, 212),
                                 (j.rect.centerx - 7, j.rect.bottom - 5),
                                 (j.rect.centerx + 7, j.rect.bottom - 5), 3)
                 else:
