@@ -39,7 +39,7 @@ class Event:
 class Screen:
     def __init__(self):
         p.init()
-        p.display.set_caption("Windoughs 12 Version " + data.VERSION)
+        p.display.set_caption("Windoughs 12." + data.VERSION)
 
         size = p.display.get_desktop_sizes()[0]
         self.surface = p.display.set_mode(size, p.RESIZABLE)
@@ -125,7 +125,9 @@ class Screen:
     def topmost_window(self, window = None):
         if window is None:
             return self.windows[-1]
-        return True if self.windows[-1] is window else False
+        if len(self.windows) == 0:
+            return False
+        return True if (self.windows[-1] is window and self.active) else False
 
     def destroy(self, window):
         del self.windows[self.windows.index(window)]

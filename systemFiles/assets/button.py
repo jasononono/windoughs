@@ -18,11 +18,9 @@ class ButtonTemplate:
         self.colour = colour
         self.highlightColour = highlight_colour
 
-    def get_rect(self, parent):
+    def mechanic(self, parent, event, enabled, status):
         self.abs = parent.abs[0] + self.rect.x, parent.abs[1] + self.rect.y
 
-    def mechanic(self, parent, event, enabled, status):
-        self.get_rect(parent)
         if status is not None:
             self.status = status
 

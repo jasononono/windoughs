@@ -3,7 +3,7 @@ import data
 from systemFiles.assets import base
 
 from applications.application import Application
-from systemFiles.assets.font import SysFont
+from systemFiles.assets.font import Font
 
 class Start(Application):
     icon = "start_icon.png"
@@ -13,10 +13,10 @@ class Start(Application):
 
         self.window = parent.new_window(self, (630, 260), "About This Totally Legit Operating System",
                                         self.icon, (10, 10))
-        self.titleFont = SysFont(70, colour = base.BLUE1)
-        self.titleFontBold = SysFont(70, True, colour = base.BLUE1)
-        self.font = SysFont(20, colour = base.BLUE2)
-        self.fontBold = SysFont(25, True, colour = base.BLUE2)
+        self.titleFont = Font(70, colour = base.BLUE1)
+        self.titleFontBold = Font(70, bold = True, colour = base.BLUE1)
+        self.font = Font(20, colour = base.BLUE2)
+        self.fontBold = Font(25, bold = True, colour = base.BLUE2)
         self.image = p.image.load("systemFiles/icons/start_icon.png")
         self.image = p.transform.scale(self.image, (80, 80))
 

@@ -1,7 +1,7 @@
 import pygame as p
 from systemFiles.assets import base
 
-from systemFiles.assets.font import SysFont
+from systemFiles.assets.font import Font
 from systemFiles.assets.button import IconButton
 from systemFiles.assets.icon import ImageIcon
 
@@ -22,7 +22,7 @@ class Window:
 
         self.title = title
         self.title_bar_colour = title_bar_colour
-        self.font = SysFont(13)
+        self.font = Font(13)
         self.iconSize = icon_size
         self.icon = None if icon is None else ImageIcon(icon, [icon_size] * 2)
 
@@ -46,7 +46,7 @@ class Window:
         self.abs = parent.abs[0] + self.rect.x, parent.abs[1] + self.rect.y
 
         # BORDER
-        if parent.topmost_window(self) and parent.active:
+        if parent.topmost_window(self):
             p.draw.rect(parent.surface, base.GREY2,
                         (self.rect.left - 2, self.title_bar.top - 2,
                         self.rect.width + 4, self.rect.height + self.title_bar.height + 4))

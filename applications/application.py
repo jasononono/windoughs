@@ -1,4 +1,4 @@
-# None functional application template
+# Non-functional application template
 
 class Application:
     icon = None

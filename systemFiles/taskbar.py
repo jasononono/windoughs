@@ -2,7 +2,7 @@ import pygame as p
 from systemFiles.assets import base
 
 from systemFiles.assets.base import time, date
-from systemFiles.assets.font import SysFont
+from systemFiles.assets.font import Font
 from systemFiles.assets.button import ImageButton
 
 
@@ -15,7 +15,7 @@ class Taskbar:
         self.rect = self.surface.get_rect()
         self.abs = 0, 0
 
-        self.font = SysFont(font_size)
+        self.font = Font(font_size)
         self.applications = {}
 
     def add_app(self, name):
