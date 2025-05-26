@@ -102,6 +102,8 @@ class Screen:
         return type(self.windows[-1].application)
 
     def quit_application(self, application):
+        if application not in self.applications:
+            return
         self.applications.remove(application)
         for i, w in enumerate(self.windows):
             if w.application is application:

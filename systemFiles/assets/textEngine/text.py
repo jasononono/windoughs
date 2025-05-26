@@ -80,6 +80,7 @@ class TextEditor(TextDisplay):
         self.cursor = Cursor(0, colour)
         self.highlight = Cursor()
         self.highlightColour = highlight_colour
+        self.lockedZone = 0
 
     def get_coordinates(self, pos):
         if pos < 0:
@@ -120,7 +121,7 @@ class TextEditor(TextDisplay):
     def update(self, parent, event, active = True):
         super().update(parent, event)
 
-        if self.highlight.position is None:
+        if self.highlight.position is None and active:
             coord = self.get_coordinates(self.cursor.position)
             self.cursor.update(self.surface, self.font, coord,
                                (self.margin[0], self.margin[1]), self.spacing)
@@ -136,6 +137,8 @@ class TextEditor(TextDisplay):
         parent.surface.blit(self.surface, self.rect)
 
     def append(self, txt):
+        if self.cursor.position < self.lockedZone:
+            return
         if self.highlight.position is None:
             self.text = self.text[:self.cursor.position] + txt + self.text[self.cursor.position:]
             self.cursor.position += len(txt)
@@ -146,6 +149,8 @@ class TextEditor(TextDisplay):
         self.highlight.position = None
 
     def delete(self):
+        if self.cursor.position <= self.lockedZone:
+            return
         if self.highlight.position is not None:
             self.text = (self.text[:min(self.cursor.position, self.highlight.position)] +
                          self.text[max(self.cursor.position, self.highlight.position):])
@@ -176,7 +181,7 @@ class TextEditor(TextDisplay):
             self.cursor.position = max(self.cursor.position, self.highlight.position)
             self.highlight.position = None
         column, row = self.get_coordinates(self.cursor.position)
-        self.cursor.position = len(self.text) if row == len(self.grid) - 1 else self.get_position((row + 1, column))
+        self.cursor.position = len(self.text) if row == len(self.grid) - 1 else self.get_position((column, row + 1))
         self.cursor.blink = 0
 
     def cursor_up(self):
@@ -184,7 +189,7 @@ class TextEditor(TextDisplay):
             self.cursor.position = min(self.cursor.position, self.highlight.position)
             self.highlight.position = None
         column, row = self.get_coordinates(self.cursor.position)
-        self.cursor.position = 0 if row == 0 else self.get_position((row - 1, column))
+        self.cursor.position = 0 if row == 0 else self.get_position((column, row - 1))
         self.cursor.blink = 0
 
     def highlight_left(self):
@@ -205,14 +210,14 @@ class TextEditor(TextDisplay):
         if self.highlight.position is None:
             self.highlight.position = self.cursor.position
         column, row = self.get_coordinates(self.cursor.position)
-        self.cursor.position = len(self.text) if row == len(self.grid) - 1 else self.get_position((row + 1, column))
+        self.cursor.position = len(self.text) if row == len(self.grid) - 1 else self.get_position((column, row + 1))
         self.cursor.blink = 0
 
     def highlight_up(self):
         if self.highlight.position is None:
             self.highlight.position = self.cursor.position
         column, row = self.get_coordinates(self.cursor.position)
-        self.cursor.position = 0 if row == 0 else self.get_position((row - 1, column))
+        self.cursor.position = 0 if row == 0 else self.get_position((column, row - 1))
         self.cursor.blink = 0
 
     def select_all(self):

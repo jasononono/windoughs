@@ -13,7 +13,7 @@ class Window:
         self.application = application
 
         self.size = [i for i in size]
-        self.minSize = (16, 12)
+        self.minSize = (100, 100)
         self.surface = p.Surface(size)
         self.rect = self.surface.get_rect()
         self.rect.x, self.rect.y = position[0], position[1] + title_bar_height
@@ -28,6 +28,7 @@ class Window:
         self.icon = None if icon is None else ImageIcon(icon, [icon_size] * 2)
 
         self.resizeSide = None
+        self.resizeBind = None
 
         self.exitButton = IconButton(size = (40, self.title_bar.height),
                                      highlight_colour = base.RED, highlight_foreground = base.WHITE)
@@ -123,14 +124,20 @@ class Window:
             self.resizeSide = 8
         elif top:
             self.resizeSide = 1
-            p.mouse.set_cursor(p.SYSTEM_CURSOR_SIZENS)
+            self.resizeBind = self.rect.bottom
+            #p.mouse.set_cursor(p.SYSTEM_CURSOR_SIZENS)
         elif right:
             self.resizeSide = 3
+            self.resizeBind = self.rect.left
+            #p.mouse.set_cursor(p.SYSTEM_CURSOR_SIZEWE)
         elif bottom:
             self.resizeSide = 5
-            p.mouse.set_cursor(p.SYSTEM_CURSOR_SIZENS)
+            self.resizeBind = self.rect.top
+            #p.mouse.set_cursor(p.SYSTEM_CURSOR_SIZENS)
         elif left:
             self.resizeSide = 7
+            self.resizeBind = self.rect.right
+            #p.mouse.set_cursor(p.SYSTEM_CURSOR_SIZEWE)
         else:
             self.resizeSide = 0
         return self.resizeSide
@@ -139,14 +146,23 @@ class Window:
         self.title_bar.x, self.title_bar.y = position[0] - self.offset[0], position[1] - self.offset[1]
 
     def resize(self, position, bound):
-        pass
-        # print(self.rect.bottom, min(self.rect.bottom - self.minSize[1], position[1]), self.rect.bottom - self.minSize[1])
-        # if self.resizeSide in (1, 2, 8):
-        #     original = self.rect.bottom
-        #     self.title_bar.y = max(bound.top, min(self.rect.bottom - self.minSize[1], position[1]))
-        #     self.size[1] -= self.title_bar.bottom + self.rect.height - original
-        # if self.resizeSide in (4, 5, 6):
-        #     pass
+        """
+        if self.resizeSide in (1, 2, 8): # top
+            self.title_bar.top = max(bound.top, min(self.resizeBind - self.minSize[1] - self.title_bar.height,
+                                                    position[1]))
+            self.size[1] = self.resizeBind - self.title_bar.bottom
+
+        if self.resizeSide in (4, 5, 6): # bottom
+            self.rect.bottom = min(bound.bottom, max(self.resizeBind + self.minSize[1],
+                                                     position[1]))
+            self.size[1] = self.rect.bottom - self.resizeBind
+
+        if self.resizeSide in (2, 3, 4): # right
+            self.title_bar.right = min(bound.right, max(self.resizeBind + self.minSize[0], position[0]))
+            self.size[0] = self.title_bar.right - self.resizeBind
+
+        if self.resizeSide in ()
+        """
 
     def fit_to_surface(self, bound):
         self.title_bar.top = max(self.title_bar.top, bound.top)

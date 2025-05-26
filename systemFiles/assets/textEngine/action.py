@@ -48,7 +48,7 @@ class Action:
             if e.type == p.KEYDOWN and e.key in self.keyboard.map.keys():
                 self.keyPressed = e.key
                 self.press()
-                self.keyCooldown = 10
+                self.keyCooldown = 20
             if e.type == p.KEYUP and e.key == self.keyPressed:
                 self.keyPressed = None
             if e.type == p.MOUSEBUTTONDOWN:
@@ -71,7 +71,7 @@ class Action:
                 self.keyCooldown -= 1
             else:
                 self.press()
-                self.keyCooldown = 1
+                self.keyCooldown = 2
 
         if not event.mouse[0]:
             self.mouseDown = False
