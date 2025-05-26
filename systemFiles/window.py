@@ -12,7 +12,8 @@ class Window:
                  icon = None, icon_size = 20):
         self.application = application
 
-        self.size = size
+        self.size = [i for i in size]
+        self.minSize = (16, 12)
         self.surface = p.Surface(size)
         self.rect = self.surface.get_rect()
         self.rect.x, self.rect.y = position[0], position[1] + title_bar_height
@@ -26,6 +27,8 @@ class Window:
         self.iconSize = icon_size
         self.icon = None if icon is None else ImageIcon(icon, [icon_size] * 2)
 
+        self.resizeSide = None
+
         self.exitButton = IconButton(size = (40, self.title_bar.height),
                                      highlight_colour = base.RED, highlight_foreground = base.WHITE)
 
@@ -33,7 +36,7 @@ class Window:
         self.abs = 0, 0
 
     def get_rect(self):
-        p.transform.scale(self.surface, self.size)
+        self.surface = p.transform.scale(self.surface, self.size)
         self.rect.width, self.rect.height = self.size
         self.title_bar.width = self.rect.width
         self.rect.x, self.rect.y = self.title_bar.x, self.title_bar.y + self.title_bar.height
@@ -97,8 +100,53 @@ class Window:
             return True
         return False
 
+    def valid_resize_position(self, position, border = 3):
+        start = (self.abs[0], self.abs[1] - self.title_bar.height)
+        end = (self.abs[0] + self.title_bar.width, self.abs[1] + self.rect.height)
+
+        top = (start[0] - border < position[0] < end[0] + border and
+               start[1] - border < position[1] < start[1] + border)
+        bottom = (start[0] - border < position[0] < end[0] + border and
+                  end[1] - border < position[1] < end[1] + border)
+        left = (start[0] - border < position[0] < start[0] + border and
+                start[1] - border < position[1] < end[1] + border)
+        right = (end[0] - border < position[0] < end[0] + border and
+                 start[1] - border < position[1] < end[1] + border)
+
+        if top and right:
+            self.resizeSide = 2
+        elif right and bottom:
+            self.resizeSide = 4
+        elif bottom and left:
+            self.resizeSide = 6
+        elif left and top:
+            self.resizeSide = 8
+        elif top:
+            self.resizeSide = 1
+            p.mouse.set_cursor(p.SYSTEM_CURSOR_SIZENS)
+        elif right:
+            self.resizeSide = 3
+        elif bottom:
+            self.resizeSide = 5
+            p.mouse.set_cursor(p.SYSTEM_CURSOR_SIZENS)
+        elif left:
+            self.resizeSide = 7
+        else:
+            self.resizeSide = 0
+        return self.resizeSide
+
     def follow_cursor(self, position):
         self.title_bar.x, self.title_bar.y = position[0] - self.offset[0], position[1] - self.offset[1]
+
+    def resize(self, position, bound):
+        pass
+        # print(self.rect.bottom, min(self.rect.bottom - self.minSize[1], position[1]), self.rect.bottom - self.minSize[1])
+        # if self.resizeSide in (1, 2, 8):
+        #     original = self.rect.bottom
+        #     self.title_bar.y = max(bound.top, min(self.rect.bottom - self.minSize[1], position[1]))
+        #     self.size[1] -= self.title_bar.bottom + self.rect.height - original
+        # if self.resizeSide in (4, 5, 6):
+        #     pass
 
     def fit_to_surface(self, bound):
         self.title_bar.top = max(self.title_bar.top, bound.top)

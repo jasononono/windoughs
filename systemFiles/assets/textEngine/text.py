@@ -1,11 +1,12 @@
 import pygame as p
+from systemFiles.assets import base
 
 from systemFiles.assets.font import Font
 from systemFiles.assets.textEngine.cursor import Cursor
 
 class TextDisplay:
     def __init__(self, text = "", pos = (0, 0), size = (800, 600), margin = (10, 10), spacing = (0.6, 1.2),
-                 font = "lucon", font_size = 14, background = (0, 0, 0), colour = (255, 255, 255)):
+                 font = "lucon", font_size = 14, background = base.BLACK, colour = base.WHITE):
         self.text = text
         self.font = Font(font_size, font)
 
@@ -69,14 +70,16 @@ class TextDisplay:
 
 class TextEditor(TextDisplay):
     def __init__(self, text = "", pos = (0, 0), size = (800, 600), margin = (10, 10), spacing = (0.6, 1.2),
-                 font = "lucon", font_size = 14, background = (0, 0, 0), colour = (255, 255, 255)):
+                 font = "lucon", font_size = 14,
+                 background = base.BLACK, colour = base.WHITE, highlight_colour = base.HIGHLIGHT1):
         super().__init__(text, pos, size, margin, spacing, font, font_size, background, colour)
 
         from systemFiles.assets.textEngine.action import Action
         from systemFiles.assets.textEngine.keyboard import keyboard
         self.action = Action(self, keyboard)
-        self.cursor = Cursor(0)
+        self.cursor = Cursor(0, colour)
         self.highlight = Cursor()
+        self.highlightColour = highlight_colour
 
     def get_coordinates(self, pos):
         if pos < 0:
@@ -106,7 +109,7 @@ class TextEditor(TextDisplay):
                        index < max(self.cursor.position, self.highlight.position))
 
         if highlighted:
-            p.draw.rect(self.surface, (67, 67, 156),
+            p.draw.rect(self.surface, self.highlightColour,
                         (coord[0], coord[1],
                          (int(self.font.size * self.spacing[0]) + 1 if text != '\n' else
                           self.rect.x + self.rect.width - coord[0] - self.margin[0]),

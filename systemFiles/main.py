@@ -6,7 +6,7 @@ from systemFiles.window import Window
 
 from applications.start import Start
 from applications.commandPrompt import CommandPrompt
-from applications.application import Application
+from applications.knowtpad import Knowtpad
 
 
 class Event:
@@ -53,9 +53,10 @@ class Screen:
         self.taskbar = Taskbar()
         self.taskbar.add_app(Start)
         self.taskbar.add_app(CommandPrompt)
-        self.taskbar.add_app(Application)
+        self.taskbar.add_app(Knowtpad)
 
         self.dragged = None
+        self.resize = None
         self.active = False
         self.windows = []
         self.applications = []
@@ -139,6 +140,7 @@ class Screen:
 
         self.get_rect()
         self.surface.blit(self.background, self.background_rect)
+        p.mouse.set_cursor(p.SYSTEM_CURSOR_ARROW)
 
         # TASKBAR
         action = self.taskbar.update(self, self.event)
@@ -148,6 +150,10 @@ class Screen:
                 self.activate_application(action)
             else:
                 self.open_application(action)
+
+        # RESIZING
+        if self.resize is not None:
+            self.resize.resize(self.event.mouse_pos, self.bound)
 
         # DRAGGING
         if self.dragged is not None:
@@ -168,13 +174,18 @@ class Screen:
             if w in self.requestedUpdates and w.update(self, self.event):
                 self.destroy(w)
                 continue
-            if w.get_dragged(self, self.event):
+            if self.topmost_window(w) and w.valid_resize_position(self.event.mouse_pos):
+                if self.event.mouse_down():
+                    self.resize = w
+            elif w.get_dragged(self, self.event):
                 self.dragged = w
-            elif self.dragged is w:
-                self.dragged = None
             if self.event.mouse_down() and w.valid_window_position(self.event.mouse_pos):
                 activation_queue.append(w)
             i += 1
+
+        if self.event.detect(p.MOUSEBUTTONUP):
+            self.dragged = None
+            self.resize = None
 
         if self.event.mouse_down() and not self.taskbar.valid_mouse_position(self.event.mouse_pos):
             if len(activation_queue) == 0:

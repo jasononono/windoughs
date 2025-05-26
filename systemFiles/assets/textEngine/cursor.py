@@ -1,11 +1,12 @@
 import pygame as p
+from systemFiles.assets import base
 
 class Cursor:
-    def __init__(self, position = None):
+    def __init__(self, position = None, colour = base.WHITE):
         self.position = position
-        self.blinkRate = 15
+        self.blinkRate = 30
         self.blink = 0
-        self.colour = (255, 255, 255)
+        self.colour = colour
 
     def update(self, surface, font, coord, offset, spacing):
         self.tick()
