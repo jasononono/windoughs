@@ -48,6 +48,9 @@ class TextDisplay:
         return self.grid
 
     def update(self, parent, event):
+        if parent.hidden:
+            return
+
         self.abs = parent.abs[0] + self.rect.x, parent.abs[1] + self.rect.y
 
         self.surface.fill(self.background)
@@ -120,6 +123,8 @@ class TextEditor(TextDisplay):
 
     def update(self, parent, event, active = True):
         super().update(parent, event)
+        if parent.hidden:
+            return
 
         if self.highlight.position is None and active:
             coord = self.get_coordinates(self.cursor.position)

@@ -8,8 +8,8 @@ class Instruction:
     def __init__(self):
         self.template = []
 
-    def draw_line(self, start, end):
-        self.template.append((Icon.draw_line, (start, end)))
+    def draw_line(self, start, end, width = 2):
+        self.template.append((Icon.draw_line, (start, end, width)))
 
 
 class Icon:
@@ -21,10 +21,10 @@ class Icon:
         for i, j in self.instruction.template:
             i(self, parent.surface, position, colour, *j)
 
-    def draw_line(self, surface, position, colour, start, end):
+    def draw_line(self, surface, position, colour, start, end, width):
         p.draw.line(surface, colour,
                     [position[i] + (start[i] - 0.5) * self.size[i] for i in range(2)],
-                    [position[i] + (end[i] - 0.5) * self.size[i] for i in range(2)], 2)
+                    [position[i] + (end[i] - 0.5) * self.size[i] for i in range(2)], width)
 
 
 class ImageIcon:
@@ -49,5 +49,14 @@ class ImageIcon:
 
 
 x = Instruction()
-x.draw_line((0.35, 0.35), (0.65, 0.65))
-x.draw_line((0.35, 0.65), (0.65, 0.35))
+x.draw_line((0.35, 0.35), (0.65, 0.65), 2)
+x.draw_line((0.35, 0.65), (0.65, 0.35), 2)
+
+square = Instruction()
+square.draw_line((0.35, 0.35), (0.65, 0.35))
+square.draw_line((0.65, 0.35), (0.65, 0.65))
+square.draw_line((0.65, 0.65), (0.35, 0.65))
+square.draw_line((0.35, 0.65), (0.35, 0.35))
+
+hLine = Instruction()
+hLine.draw_line((0.35, 0.5), (0.65, 0.5), 2)

@@ -124,6 +124,7 @@ class Screen:
     def activate(self, window):
         del self.windows[self.windows.index(window)]
         self.windows.append(window)
+        window.hidden = False
 
     def topmost_window(self, window = None):
         if window is None:
@@ -175,6 +176,9 @@ class Screen:
             w = self.windows[i]
             if w in self.requestedUpdates and w.update(self, self.event):
                 self.destroy(w)
+                continue
+            if w.hidden:
+                i += 1
                 continue
             if self.topmost_window(w) and w.valid_resize_position(self.event.mouse_pos):
                 if self.event.mouse_down():

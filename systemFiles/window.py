@@ -3,7 +3,7 @@ from systemFiles.assets import base
 
 from systemFiles.assets.font import Font
 from systemFiles.assets.button import IconButton
-from systemFiles.assets.icon import ImageIcon
+from systemFiles.assets.icon import ImageIcon, square, hLine
 
 
 class Window:
@@ -29,9 +29,15 @@ class Window:
 
         self.resizeSide = None
         self.resizeBind = None
+        self.hidden = False
+        self.originalSize = None
 
         self.exitButton = IconButton(size = (40, self.title_bar.height),
                                      highlight_colour = base.RED, highlight_foreground = base.WHITE)
+        self.maximizeButton = IconButton(instruction = square, size = (40, self.title_bar.height),
+                                         highlight_colour = base.GREY1)
+        self.minimizeButton = IconButton(instruction= hLine, size = (40, self.title_bar.height),
+                                         highlight_colour = base.GREY1)
 
         self.offset = 0, 0
         self.abs = 0, 0
@@ -43,8 +49,13 @@ class Window:
         self.rect.x, self.rect.y = self.title_bar.x, self.title_bar.y + self.title_bar.height
 
         self.exitButton.rect.topleft = self.title_bar.right - 40, self.title_bar.top
+        self.maximizeButton.rect.topleft = self.title_bar.right - 80, self.title_bar.top
+        self.minimizeButton.rect.topleft = self.title_bar.right - 120, self.title_bar.top
 
     def update(self, parent, event):
+        if self.hidden:
+            return
+
         self.fit_to_surface(parent.bound)
         self.get_rect()
         self.abs = parent.abs[0] + self.rect.x, parent.abs[1] + self.rect.y
@@ -62,8 +73,20 @@ class Window:
         # TITLE BAR
         p.draw.rect(parent.surface, self.title_bar_colour, self.title_bar)
 
+        # BUTTONS
         action = self.exitButton.update(parent, event, status = parent.topmost_window(self))
+        if self.maximizeButton.update(parent, event, status = parent.topmost_window(self)):
+            if self.originalSize is None:
+                self.originalSize = self.size
+                self.size = [parent.bound.width, parent.bound.height - self.title_bar.height]
+            else:
+                self.size = self.originalSize
+                self.originalSize = None
+        if self.minimizeButton.update(parent, event, status = parent.topmost_window(self)):
+            self.hidden = True
+            parent.active = False
 
+        # ICON
         if self.icon is not None:
             self.icon.display(parent.surface,
                               (self.title_bar.left + self.iconSize / 2 + 5, self.title_bar.centery))
@@ -125,19 +148,19 @@ class Window:
         elif top:
             self.resizeSide = 1
             self.resizeBind = self.rect.bottom
-            #p.mouse.set_cursor(p.SYSTEM_CURSOR_SIZENS)
+            p.mouse.set_cursor(p.SYSTEM_CURSOR_SIZENS)
         elif right:
             self.resizeSide = 3
             self.resizeBind = self.rect.left
-            #p.mouse.set_cursor(p.SYSTEM_CURSOR_SIZEWE)
+            p.mouse.set_cursor(p.SYSTEM_CURSOR_SIZEWE)
         elif bottom:
             self.resizeSide = 5
             self.resizeBind = self.rect.top
-            #p.mouse.set_cursor(p.SYSTEM_CURSOR_SIZENS)
+            p.mouse.set_cursor(p.SYSTEM_CURSOR_SIZENS)
         elif left:
             self.resizeSide = 7
             self.resizeBind = self.rect.right
-            #p.mouse.set_cursor(p.SYSTEM_CURSOR_SIZEWE)
+            p.mouse.set_cursor(p.SYSTEM_CURSOR_SIZEWE)
         else:
             self.resizeSide = 0
         return self.resizeSide
@@ -146,8 +169,7 @@ class Window:
         self.title_bar.x, self.title_bar.y = position[0] - self.offset[0], position[1] - self.offset[1]
 
     def resize(self, position, bound):
-        """
-        if self.resizeSide in (1, 2, 8): # top
+        if self.resizeSide in (8, 1, 2): # top
             self.title_bar.top = max(bound.top, min(self.resizeBind - self.minSize[1] - self.title_bar.height,
                                                     position[1]))
             self.size[1] = self.resizeBind - self.title_bar.bottom
@@ -161,8 +183,9 @@ class Window:
             self.title_bar.right = min(bound.right, max(self.resizeBind + self.minSize[0], position[0]))
             self.size[0] = self.title_bar.right - self.resizeBind
 
-        if self.resizeSide in ()
-        """
+        if self.resizeSide in (6, 7, 8): # left
+            self.title_bar.left = max(bound.left, min(self.resizeBind - self.minSize[0], position[0]))
+            self.size[0] = self.resizeBind - self.title_bar.left
 
     def fit_to_surface(self, bound):
         self.title_bar.top = max(self.title_bar.top, bound.top)
