@@ -12,7 +12,7 @@ class Start(Application):
         super().__init__(parent)
 
         self.window = parent.new_window(self, (630, 260), "About This Totally Legit Operating System",
-                                        self.icon, (10, 10))
+                                        self.icon, (10, 10), resizable = False)
         self.titleFont = Font(70, colour = base.BLUE1)
         self.titleFontBold = Font(70, bold = True, colour = base.BLUE1)
         self.font = Font(20, colour = base.BLUE2)

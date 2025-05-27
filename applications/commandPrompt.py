@@ -14,7 +14,7 @@ class CommandPrompt(Application):
 
     def update(self, parent, event):
         self.editor.update(self.window, event, parent.topmost_window(self.window))
-        if event.detect(p.KEYDOWN) and event.key[p.K_RETURN]:
+        if parent.topmost_window(self.window) and event.detect(p.KEYDOWN) and event.key[p.K_RETURN]:
             self.run_command(parent)
 
         return super().update(parent, event)
@@ -28,7 +28,7 @@ class CommandPrompt(Application):
         arguments = command.split(' ')
         func, arguments = arguments[0], arguments[1:]
         if func == "help":
-            self.display("--- List of Functions ---\n"
+            self.display("--- List of Commands ---\n"
                          "    echo *args\n"
                          "    quit\n"
                          "    shutdown\n"

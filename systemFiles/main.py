@@ -109,10 +109,11 @@ class Screen:
             if w.application is application:
                 del(self.windows[i])
 
-    def new_window(self, application, size = (400, 300), title = "Window", icon = None, position = None):
+    def new_window(self, application, size = (400, 300), title = "Window", icon = None, position = None,
+                   resizable = True):
         if position is None:
             position = self.rect.centerx - size[0] / 2, self.rect.centery - size[1] / 2
-        window = Window(application, position, size, title, icon = icon)
+        window = Window(application, position, size, title, icon = icon, resizable = resizable)
         self.windows.append(window)
         return window
 
@@ -180,7 +181,7 @@ class Screen:
             if w.hidden:
                 i += 1
                 continue
-            if self.topmost_window(w) and w.valid_resize_position(self.event.mouse_pos):
+            if w.resizable and self.topmost_window(w) and w.valid_resize_position(self.event.mouse_pos):
                 if self.event.mouse_down():
                     self.resize = w
             elif w.get_dragged(self, self.event):
