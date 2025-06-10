@@ -134,7 +134,7 @@ class TextEditor(TextDisplay):
         if active:
             self.action.update(event)
 
-        if self.valid_mouse_position(event.mouse_pos):
+        if active and self.valid_mouse_position(event.mouse_pos):
             p.mouse.set_cursor(p.SYSTEM_CURSOR_IBEAM)
         else:
             p.mouse.set_cursor(p.SYSTEM_CURSOR_ARROW)

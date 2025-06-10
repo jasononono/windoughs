@@ -63,11 +63,11 @@ class Window:
 
         # BORDER
         if parent.topmost_window(self):
-            p.draw.rect(parent.surface, base.GREY2,
+            p.draw.rect(parent.surface, base.GREY3,
                         (self.rect.left - 2, self.title_bar.top - 2,
                         self.rect.width + 4, self.rect.height + self.title_bar.height + 4))
         else:
-            p.draw.rect(parent.surface, base.GREY3,
+            p.draw.rect(parent.surface, base.GREY4,
                         (self.rect.left - 1, self.title_bar.top - 1,
                          self.rect.width + 2, self.rect.height + self.title_bar.height + 2))
 

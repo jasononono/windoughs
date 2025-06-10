@@ -2,6 +2,7 @@ import pygame as p
 from systemFiles.assets import base
 
 from systemFiles.assets import icon
+from systemFiles.assets.font import Font
 
 
 class ButtonTemplate:
@@ -83,22 +84,25 @@ class IconButton(ButtonTemplate):
         return action
 
 
-'''
 class TextButton(ButtonTemplate):
-    def __init__(self, parent, command, position = (0, 0), text = "Ok", fontSize = 13,
-                 colour = (55, 55, 65), highlight_colour = (45, 45, 55)):
+    def __init__(self, position = (0, 0), text = "OK", size = None,
+                 colour = base.GREY2, highlight_colour = base.WHITE,
+                 foreground = base.BLACK, highlight_foreground = None, font = "segoeui", font_size = 15):
+        self.font = Font(font_size, font)
         self.text = text
-        self.font = Font(size = fontSize, bold = True)
-        self.status = True
-        super().__init__(parent, command, position, self.get_size(), colour, highlight_colour)
+        self.size = self.font.get_size(self.text)
+        if size is None:
+            size = self.size[0] + 30, self.size[1] + 15
+        super().__init__(position, size, colour, highlight_colour)
 
-    def get_size(self):
-        return [i + 10 for i in self.font.get_size(self.text)]
+        self.position = [(self.rect.size[i] - self.size[i]) / 2 for i in range(2)]
+        self.foreground = foreground
+        self.highlightForeground = foreground if highlight_foreground is None else highlight_foreground
 
-    def update(self, screen):
-        action = None
-        if self.status:
-            action = super().update(screen)
-        screen.surface.blit(self.font.render(self.text, ((255, 255, 255) if self.status else (150, 150, 150))), (self.absX + 5, self.absY + 5))
+    def update(self, parent, event, enabled = None, status = None):
+        action = super().mechanic(parent, event, enabled, status)
+        self.font.render(self.surface, self.text, self.position,
+                         self.highlightForeground if (self.valid_mouse_position(event.mouse_pos) and self.status)
+                                                     or enabled else self.foreground)
+        parent.surface.blit(self.surface, self.rect)
         return action
-'''
