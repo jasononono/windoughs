@@ -34,11 +34,12 @@ class Window:
         self.originalSize = None
 
         self.exitButton = IconButton(size = (40, self.title_bar.height),
-                                     highlight_colour = base.RED, highlight_foreground = base.WHITE)
+                                     highlight_colour = base.RED, highlight_foreground = base.WHITE,
+                                     skipped_parent = True)
         self.maximizeButton = IconButton(instruction = square, size = (40, self.title_bar.height),
-                                         highlight_colour = base.GREY1)
+                                         highlight_colour = base.GREY1, skipped_parent = True)
         self.minimizeButton = IconButton(instruction= hLine, size = (40, self.title_bar.height),
-                                         highlight_colour = base.GREY1)
+                                         highlight_colour = base.GREY1, skipped_parent = True)
 
         self.offset = 0, 0
         self.abs = 0, 0

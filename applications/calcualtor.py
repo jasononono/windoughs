@@ -9,7 +9,7 @@ class Calcualtor(Application):
 
     def __init__(self, parent):
         super().__init__(parent)
-        self.window = parent.new_window(self, (295, 420), "Calcualtor", "calculator_icon.png")
+        self.window = parent.new_window(self, (295, 420), "Calcualtor", self.icon, resizable = False)
 
         self.display = TextDisplay(pos = (10, 10), size = (275, 45), font_size = 30,
                                    background = base.WHITE, colour = base.BLACK)

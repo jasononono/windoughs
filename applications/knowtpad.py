@@ -8,7 +8,7 @@ class Knowtpad(Application):
 
     def __init__(self, parent):
         super().__init__(parent)
-        self.window = parent.new_window(self, (400, 300), "Knowtpad", "knowtpad_icon.png")
+        self.window = parent.new_window(self, (400, 300), "Knowtpad", self.icon)
         self.editor = TextEditor("", size = (400, 300), font_size = 16,
                                  background = base.GREY1, colour = base.BLACK, highlight_colour = base.HIGHLIGHT2)
 

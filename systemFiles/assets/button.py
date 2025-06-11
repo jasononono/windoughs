@@ -70,15 +70,17 @@ class ImageButton(ButtonTemplate):
 class IconButton(ButtonTemplate):
     def __init__(self, position = (0, 0), instruction = icon.x, size = (40, 40),
                  colour = base.WHITE, highlight_colour = base.WHITE,
-                 foreground = (48, 53, 61), highlight_foreground = None):
+                 foreground = (48, 53, 61), highlight_foreground = None, skipped_parent = False):
         super().__init__(position, size, colour, highlight_colour)
         self.icon = icon.Icon(instruction, [min(size)] * 2)
         self.foreground = foreground
         self.highlightForeground = foreground if highlight_foreground is None else highlight_foreground
+        self.skippedParent = skipped_parent
 
     def update(self, parent, event, enabled = None, status = None):
         action = super().update(parent, event, enabled, status)
-        self.icon.display(parent, [self.abs[i] + self.rect.size[i] / 2 for i in range(2)],
+        self.icon.display(parent,
+                          [(self.abs[i] if self.skippedParent else 0) + self.rect.size[i] / 2 for i in range(2)],
                           self.highlightForeground if (self.valid_mouse_position(event.mouse_pos) and
                                                        self.status) or enabled else self.foreground)
         return action

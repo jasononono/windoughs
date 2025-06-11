@@ -8,7 +8,7 @@ class CommandPrompt(Application):
 
     def __init__(self, parent):
         super().__init__(parent)
-        self.window = parent.new_window(self, (800, 600), "Command Prompt", "command_icon.png")
+        self.window = parent.new_window(self, (800, 600), "Command Prompt", self.icon)
         self.editor = TextEditor("", size = (800, 600), font_size = 15)
         self.display(">>> ")
 

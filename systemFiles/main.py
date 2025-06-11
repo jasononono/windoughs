@@ -8,6 +8,7 @@ from applications.start import Start
 from applications.commandPrompt import CommandPrompt
 from applications.knowtpad import Knowtpad
 from applications.calcualtor import Calcualtor
+from applications.fileExplorer import FileExplorer
 
 
 class Event:
@@ -56,6 +57,7 @@ class Screen:
         self.taskbar.add_app(CommandPrompt)
         self.taskbar.add_app(Knowtpad)
         self.taskbar.add_app(Calcualtor)
+        self.taskbar.add_app(FileExplorer)
 
         self.dragged = None
         self.resize = None
