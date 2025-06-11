@@ -45,11 +45,11 @@ class FileExplorer(Application):
 
     def sync_items(self, parent, event):
         self.pathName = "files/" + '/'.join(self.path)
-        self.items = [i for i in os.listdir(self.pathName) if i[0] != '.']
+        self.items = sorted([i for i in os.listdir(self.pathName) if i[0] != '.'])
         length = len(self.buttons)
         if len(self.items) >= length:
             for i in range(len(self.items) - length):
-                self.buttons.append(ButtonTemplate((40, 60 + length * 30), (580, 30),
+                self.buttons.append(ButtonTemplate((40, 60 + length * 30), (550, 30),
                                                    base.WHITE, base.GREY1))
                 length += 1
         else:
