@@ -8,6 +8,7 @@ from applications.start import Start
 from applications.commandPrompt import CommandPrompt
 from applications.knowtpad import Knowtpad
 from applications.calcualtor import Calcualtor
+from applications.snek import Snek
 from applications.fileExplorer import FileExplorer
 
 
@@ -28,11 +29,16 @@ class Event:
     def detect(self, event):
         for e in self.event:
             if e.type == event:
-                return True
-        return False
+                return e
+        return None
 
-    def keydown(self, key):
-        return self.key[key]
+    def key_down(self, key = None):
+        event = self.detect(p.KEYDOWN)
+        if key is None:
+            if event:
+                return event.key
+            return None
+        return key == event.key if event else None
 
     def mouse_down(self):
         return self.detect(p.MOUSEBUTTONDOWN)
@@ -57,6 +63,7 @@ class Screen:
         self.taskbar.add_app(CommandPrompt)
         self.taskbar.add_app(Knowtpad)
         self.taskbar.add_app(Calcualtor)
+        self.taskbar.add_app(Snek)
         self.taskbar.add_app(FileExplorer)
 
         self.dragged = None
