@@ -1,4 +1,3 @@
-# windoughs12
+Older Windoughs versions are stored in separate branches
 
-why is Windows 12 still not announced
-ahhhh
+Time to rewrite everything in opengl (fun)
