@@ -1,16 +1,10 @@
-#include <iostream>
-#include <algorithm>
-#include <SFML/Graphics.hpp>
+#include "include/windoughs.hpp"
 
 
-struct Screen {
-    sf::RenderWindow window;
-    sf::Texture wallpaper_texture;
-    sf::Sprite wallpaper;
-    bool execute = true;
+namespace win {
 
-    Screen(unsigned int width = 800, unsigned int height = 600, std::string wallpaper_image = "wallpaper_default.jpg"):
-        window(sf::VideoMode({width, height}), "Windoughs"),
+    Screen::Screen(unsigned int width, unsigned int height, std::string wallpaper_image):
+        window(sf::VideoMode({width, height}), "Windoughs", sf::Style::Default, sf::State::Windowed, get_context_settings()),
         wallpaper_texture(wallpaper_image),
         wallpaper(wallpaper_texture) {
 
@@ -19,13 +13,12 @@ struct Screen {
         resize_wallpaper(width, height);
     }
 
-    sf::ContextSettings get_context_settings() {
+    sf::ContextSettings Screen::get_context_settings() {
         sf::ContextSettings settings;
-        settings.antiAliasingLevel = 8;
         return settings;
     }
 
-    void resize_wallpaper(unsigned int width, unsigned int height) {
+    void Screen::resize_wallpaper(unsigned int width, unsigned int height) {
         sf::View view(sf::FloatRect({0, 0}, {static_cast<float>(width), static_cast<float>(height)}));
         window.setView(view);
 
@@ -39,7 +32,7 @@ struct Screen {
         wallpaper.setPosition({offset_x, offset_y});
     }
 
-    void refresh() {
+    void Screen::refresh() {
         while (const std::optional<sf::Event> event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>()) {
                 window.close();
@@ -53,13 +46,5 @@ struct Screen {
         window.draw(wallpaper);
         window.display();
     }
-};
 
-
-int main() {
-    Screen screen(800, 600);
-
-    while (screen.execute) {
-        screen.refresh();
-    }
 }
