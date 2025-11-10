@@ -2,7 +2,7 @@
 
 
 int main() {
-    win::Screen screen(800, 600);
+    win::Screen screen({800, 600});
 
     while (screen.execute) {
         screen.refresh();
