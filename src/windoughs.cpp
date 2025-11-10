@@ -35,10 +35,10 @@ namespace win {
     }
 
     void Screen::handle_events() {
+        event.mouse_pressed = false;
+        event.mouse_released = false;
+        
         while (const std::optional<sf::Event> e = surface.pollEvent()) {
-            event.mouse_pressed = false;
-            event.mouse_released = false;
-
             if (e->is<sf::Event::Closed>()) {
                 surface.close();
                 execute = false;
@@ -62,11 +62,16 @@ namespace win {
         surface.clear();
         surface.draw(wallpaper);
 
-        for (Window &w : windows) {
-            if (event.mouse_pressed && w.contains(event.mouse_position)) {
-
+        for (int i = 0; i < windows.size(); i++) {
+            if (event.mouse_pressed && windows[i].contains(event.mouse_position)) {
+                selected_window = i;
+            } else if (event.mouse_released) {
+                selected_window = -1;
             }
-            w.refresh(*this);
+            windows[i].refresh(*this);
+        }
+        if (selected_window != -1) {
+            windows[selected_window].position = event.mouse_position;
         }
 
         surface.display();

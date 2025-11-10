@@ -9,12 +9,17 @@
 
 namespace win {
 
-    std::map<sf::Mouse::Button, int> MOUSE = {{sf::Mouse::Button::Left, 0},
+    inline std::map<sf::Mouse::Button, int> MOUSE = {{sf::Mouse::Button::Left, 0},
                                               {sf::Mouse::Button::Middle, 1},
                                               {sf::Mouse::Button::Right, 2}};
 
-    struct Event;
     struct Window;
+
+    struct Event {
+        bool mouse[3];
+        bool mouse_pressed, mouse_released;
+        sf::Vector2f mouse_position;
+    };
 
     struct Screen {
         sf::RenderWindow surface;
@@ -23,6 +28,7 @@ namespace win {
         bool execute = true;
         Event event;
         std::vector<Window> windows;
+        int selected_window = -1;
 
         Screen(sf::Vector2f size, const std::string &wallpaper_image = "assets/wallpaper_default.jpg");
 
@@ -31,12 +37,6 @@ namespace win {
         void handle_events();
         void refresh();
         sf::Sprite draw_texture(sf::RenderTexture &render_texture, sf::Vector2f position);
-    };
-
-    struct Event {
-        bool mouse[3];
-        bool mouse_pressed, mouse_released;
-        sf::Vector2f mouse_position;
     };
 
     struct Window {
