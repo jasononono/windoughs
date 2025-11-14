@@ -9,15 +9,19 @@
 
 namespace win {
 
-    inline std::map<sf::Mouse::Button, int> MOUSE = {{sf::Mouse::Button::Left, 0},
-                                              {sf::Mouse::Button::Middle, 1},
-                                              {sf::Mouse::Button::Right, 2}};
+    constexpr inline std::size_t MOUSE_COUNT = 5;
+    const inline std::map<sf::Mouse::Button, int> MOUSE = {{sf::Mouse::Button::Left, 0},
+                                                           {sf::Mouse::Button::Middle, 1},
+                                                           {sf::Mouse::Button::Right, 2},
+                                                           {sf::Mouse::Button::Extra1, 3},
+                                                           {sf::Mouse::Button::Extra2, 4}};
 
     struct Window;
 
     struct Event {
-        bool mouse[3];
-        bool mouse_pressed, mouse_released;
+        bool mouse[MOUSE_COUNT];
+        bool mouse_pressed[MOUSE_COUNT];
+        bool mouse_released[MOUSE_COUNT];
         sf::Vector2f mouse_position;
     };
 
@@ -29,6 +33,7 @@ namespace win {
         Event event;
         std::vector<Window> windows;
         int selected_window = -1;
+        sf::Vector2f selected_window_offset;
 
         Screen(sf::Vector2f size, const std::string &wallpaper_image = "assets/wallpaper_default.jpg");
 

@@ -35,9 +35,11 @@ namespace win {
     }
 
     void Screen::handle_events() {
-        event.mouse_pressed = false;
-        event.mouse_released = false;
-        
+        for (int i = 0; i < MOUSE_COUNT; i++) {
+            event.mouse_pressed[i] = false;
+            event.mouse_released[i] = false;
+        }
+
         while (const std::optional<sf::Event> e = surface.pollEvent()) {
             if (e->is<sf::Event::Closed>()) {
                 surface.close();
@@ -46,11 +48,11 @@ namespace win {
             } else if (e->is<sf::Event::Resized>()) {
                 resize_wallpaper(static_cast<sf::Vector2f>(e->getIf<sf::Event::Resized>()->size));
             } else if (e->is<sf::Event::MouseButtonPressed>()) {
-                event.mouse[MOUSE[e->getIf<sf::Event::MouseButtonPressed>()->button]] = true;
-                event.mouse_pressed = true;
+                event.mouse[MOUSE.at(e->getIf<sf::Event::MouseButtonPressed>()->button)] = true;
+                event.mouse_pressed[MOUSE.at(e->getIf<sf::Event::MouseButtonPressed>()->button)] = true;
             } else if (e->is<sf::Event::MouseButtonReleased>()) {
-                event.mouse[MOUSE[e->getIf<sf::Event::MouseButtonReleased>()->button]] = false;
-                event.mouse_released = true;
+                event.mouse[MOUSE.at(e->getIf<sf::Event::MouseButtonReleased>()->button)] = false;
+                event.mouse_released[MOUSE.at(e->getIf<sf::Event::MouseButtonReleased>()->button)] = true;
             } else if (e->is<sf::Event::MouseMoved>()) {
                 event.mouse_position = static_cast<sf::Vector2f>(e->getIf<sf::Event::MouseMoved>()->position);
             }
@@ -63,15 +65,15 @@ namespace win {
         surface.draw(wallpaper);
 
         for (int i = 0; i < windows.size(); i++) {
-            if (event.mouse_pressed && windows[i].contains(event.mouse_position)) {
+            if (event.mouse_pressed[0] && windows[i].contains(event.mouse_position)) {
                 selected_window = i;
-            } else if (event.mouse_released) {
-                selected_window = -1;
+                selected_window_offset = event.mouse_position - windows[i].position;
             }
             windows[i].refresh(*this);
         }
+        if (event.mouse_released[0]) {selected_window = -1;}
         if (selected_window != -1) {
-            windows[selected_window].position = event.mouse_position;
+            windows[selected_window].position = event.mouse_position - selected_window_offset;
         }
 
         surface.display();
