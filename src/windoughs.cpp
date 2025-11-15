@@ -12,10 +12,12 @@ namespace win {
         wallpaper_texture.setSmooth(true);
         resize_wallpaper(size);
 
-        windows.push_back(Window(*this, {100, 100}, {10, 10}));
+        for (int i = 0; i < 3; i++) {
+            windows.push_back(Window(*this, {400, 300}, {i * 20.0f, i * 20.0f}));
+        }
     }
 
-    sf::ContextSettings Screen::get_context_settings() {
+    sf::ContextSettings Screen::get_context_settings() const {
         sf::ContextSettings settings;
         return settings;
     }
@@ -64,11 +66,16 @@ namespace win {
         surface.clear();
         surface.draw(wallpaper);
 
+        sf::RectangleShape border;
+
         for (int i = 0; i < windows.size(); i++) {
-            if (event.mouse_pressed[0] && windows[i].contains(event.mouse_position)) {
+            if (event.mouse_pressed[0] && windows[i].titlebar.contains(event.mouse_position)) {
                 selected_window = i;
                 selected_window_offset = event.mouse_position - windows[i].position;
             }
+            border.setPosition({windows[i].position - sf::Vector2f(1, 1)});
+            border.setSize({windows[i].size + sf::Vector2f(2, 2)});
+            surface.draw(border);
             windows[i].refresh(*this);
         }
         if (event.mouse_released[0]) {selected_window = -1;}
@@ -87,22 +94,48 @@ namespace win {
         return sprite;
     }
 
-    Window::Window(Screen &parent, sf::Vector2f size, sf::Vector2f position):
-    size(size), position(position),
-    surface(static_cast<sf::Vector2u>(size), parent.get_context_settings()),
-    sprite(surface.getTexture()) {
-        
+    TitleBar::TitleBar(const Screen &screen, const Window &parent, float height):
+    size(parent.size.x, height),
+    global_position(parent.position),
+    surface(static_cast<sf::Vector2u>(size), screen.get_context_settings()),
+    sprite(surface.getTexture()) {}
+
+    void TitleBar::refresh(Window &parent) {
+        surface.clear(sf::Color(255, 255, 255));
+        surface.display();
+        sprite = parent.draw_texture(surface, {0, 0});
+        global_position = parent.position;
     }
 
-    void Window::refresh(Screen &parent) {
-        surface.clear(sf::Color(0, 0, 0));
+    bool TitleBar::contains(sf::Vector2f pos) {
+        sf::FloatRect bound = sprite.getGlobalBounds();
+        bound.position = global_position;
+        return bound.contains(pos);
+    }
 
+    Window::Window(const Screen &screen, sf::Vector2f size, sf::Vector2f position):
+    size(size), position(position),
+    surface(static_cast<sf::Vector2u>(size), screen.get_context_settings()),
+    sprite(surface.getTexture()),
+    titlebar(screen, *this, 30) {}
+
+    void Window::refresh(Screen &screen) {
+        surface.clear(sf::Color(0, 0, 0));
+        titlebar.refresh(*this);
         surface.display();
-        sprite = parent.draw_texture(surface, position);
+        sprite = screen.draw_texture(surface, position);
     }
 
     bool Window::contains(sf::Vector2f pos) {
         return sprite.getGlobalBounds().contains(pos);
+    }
+
+    sf::Sprite Window::draw_texture(sf::RenderTexture &render_texture, sf::Vector2f position) {
+        const sf::Texture &texture = render_texture.getTexture();
+        sf::Sprite sprite(texture);
+        sprite.setPosition(position);
+        surface.draw(sprite);
+        return sprite;
     }
 
 }

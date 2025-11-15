@@ -37,23 +37,37 @@ namespace win {
 
         Screen(sf::Vector2f size, const std::string &wallpaper_image = "assets/wallpaper_default.jpg");
 
-        sf::ContextSettings get_context_settings();
+        sf::ContextSettings get_context_settings() const;
         void resize_wallpaper(sf::Vector2f size);
         void handle_events();
         void refresh();
         sf::Sprite draw_texture(sf::RenderTexture &render_texture, sf::Vector2f position);
     };
 
-    struct Window {
+    struct TitleBar {
+        sf::Vector2f size;
+        sf::Vector2f global_position;
         sf::RenderTexture surface;
         sf::Sprite sprite;
+
+        TitleBar(const Screen &screen, const Window &parent, float height);
+
+        void refresh(Window &parent);
+        bool contains(sf::Vector2f pos);
+    };
+
+    struct Window {
         sf::Vector2f size;
         sf::Vector2f position;
+        sf::RenderTexture surface;
+        sf::Sprite sprite;
+        TitleBar titlebar;
 
-        Window(Screen &parent, sf::Vector2f size, sf::Vector2f position);
+        Window(const Screen &screen, sf::Vector2f size, sf::Vector2f position);
 
-        void refresh(Screen &parent);
+        void refresh(Screen &screen);
         bool contains(sf::Vector2f pos);
+        sf::Sprite draw_texture(sf::RenderTexture &render_texture, sf::Vector2f position);
     };
 
 }
